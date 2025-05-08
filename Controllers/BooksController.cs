@@ -19,32 +19,38 @@ namespace BookApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBooks()
         {
-            var books = await _context.books.ToListAsync();
+            var books = await _context.Books.ToListAsync();
             return Ok(books);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBook(int id)
         {
-            var book = await _context.books.FindAsync(id);
+            var book = await _context.Books.FindAsync(id);
             if (book == null) return NotFound();
             return Ok(book);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook([FromBody] Book book)
+        public async Task<IActionResult> CreateBook([FromBody] BookCreateDto bookDto)
         {
-            _context.books.Add(book);
+            var book = new Book
+            {
+                Title = bookDto.Title
+            };
+
+            _context.Books.Add(book);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetBook), new { id = book.id }, book);
+            return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, [FromBody] Book book)
+        public async Task<IActionResult> UpdateBook(int id, [FromBody] BookUpdateDto bookUpdate)
         {
-            if (id != book.id) return BadRequest();
+            var book = await _context.Books.FindAsync(id);
+            if (book == null) return NotFound();
 
-            _context.Entry(book).State = EntityState.Modified;
+            book.Title = bookUpdate.Title;
             await _context.SaveChangesAsync();
             return NoContent();
         }
@@ -52,10 +58,10 @@ namespace BookApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = await _context.books.FindAsync(id);
+            var book = await _context.Books.FindAsync(id);
             if (book == null) return NotFound();
 
-            _context.books.Remove(book);
+            _context.Books.Remove(book);
             await _context.SaveChangesAsync();
             return NoContent();
         }

@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookApi.Models
 {
-    public class Book
+    public class BookCreateDto
     {
-        public int Id { get; set; }
-        
         [Required]
         public string Title { get; set; } = string.Empty;
     }
-}
+} 
